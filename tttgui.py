@@ -5,7 +5,7 @@ class tttCanvas:
         self.window = Tk()
         self.window.title('Tic Tac Toe')
         self.canvas_width = 300
-        self.canvas_height = 300
+        self.canvas_height = 320
         self.turn = 0  # if even, cross's turn, if odd, naught's turn
         self.winCondition = False
 
@@ -44,11 +44,50 @@ class tttCanvas:
             return 'o'
 
     def processVictoryCondition(self):
+        # Horizontal wins
         for i in range(3):
             if self.board[i] == ['x','x','x']:
-                print("x wins") # TODO print to canvas
+                self.canvas.create_text(150, 310, text="X Wins!!", tags='winner')
+                self.winCondition = True
             if self.board[i] == ['o','o','o']:
-                print('o wins')
+                self.canvas.create_text(150, 310, text="O Wins!!", tags='winner')
+                self.winCondition = True
+
+        # Vertical wins
+        for j in range(3):
+            column = []
+            for i in range(3):
+                if self.board[i][j] != ' ':
+                    column.append(self.board[i][j])
+            if column == ['x','x','x']:
+                self.canvas.create_text(150, 310, text="X Wins!!", tags='winner')
+                self.winCondition = True
+            if column == ['o','o','o']:
+                self.canvas.create_text(150, 310, text="O Wins!!", tags='winner')
+                self.winCondition = True
+
+        # Diagonal wins
+        diagonal = []
+        for i in range(3):
+            for j in range(3):
+                if i == j and self.board[i][j] != ' ':
+                    diagonal.append(self.board[i][j])
+            if diagonal == ['x','x','x']:
+                self.canvas.create_text(150, 310, text="X Wins!!", tags='winner')
+                self.winCondition = True
+            if diagonal == ['o','o','o']:
+                self.canvas.create_text(150, 310, text="O Wins!!", tags='winner')
+                self.winCondition = True
+
+        oppositeDiagonal = []
+        for i in range(3):
+            oppositeDiagonal.append(self.board[i][2-i])
+        if oppositeDiagonal == ['x', 'x', 'x']:
+            self.canvas.create_text(150, 310, text="X Wins!!", tags='winner')
+            self.winCondition = True
+        if oppositeDiagonal == ['o', 'o', 'o']:
+            self.canvas.create_text(150, 310, text="O Wins!!", tags='winner')
+            self.winCondition = True
 
 
 
