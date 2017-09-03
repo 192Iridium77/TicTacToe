@@ -22,7 +22,12 @@ class tttCanvas:
         frame.pack()
         frame2 = Frame(self.window)
         frame2.pack()
-        Button(frame2, text="Reset", command=self.resetBoard).pack()
+        Button(frame2, text="Reset", command=self.resetBoard).grid(row=2, column=2, sticky='E')
+        Label(frame2, text="Turn:").grid(row=1, column=1)
+        self.currentTurn = StringVar()
+        self.currentTurn.set(self.processTurn())
+        Label(frame2, textvariable=self.currentTurn).grid(row=1, column=2)
+
         self.canvas = Canvas(frame, width=self.canvas_width, height=self.canvas_height, bg="white")
         self.canvas.pack()
         self.drawGrid()
@@ -34,10 +39,11 @@ class tttCanvas:
 
 
     def drawGrid(self):
-        line2 = self.canvas.create_line(200, 10, 200, 290, width="3", tags='line2')
-        line3 = self.canvas.create_line(10, 100, 290, 100, width="3", tags='line3')
-        line4 = self.canvas.create_line(10, 200, 290, 200, width="3", tags='line4')
-        line1 = self.canvas.create_line(100, 10, 100, 290, width="3", tags="line1")
+        line1 = self.canvas.create_line(100, 0, 100, 300, width="3", tags="line1")
+        line2 = self.canvas.create_line(200, 0, 200, 300, width="3", tags='line2')
+        line3 = self.canvas.create_line(0, 100, 300, 100, width="3", tags='line3')
+        line4 = self.canvas.create_line(0, 200, 300, 200, width="3", tags='line4')
+        line5 = self.canvas.create_line(0, 300, 300, 300, width="3", tags='line4')
 
 
     def processTurn(self):
@@ -49,13 +55,7 @@ class tttCanvas:
     def processVictoryCondition(self):
         # Horizontal wins
         for i in range(3):
-            # TODO this conditional should be a modularized function
-            if self.board[i] == ['x','x','x']:
-                self.canvas.create_text(150, 310, text="X Wins!!", tags='winner')
-                self.winCondition = True
-            if self.board[i] == ['o','o','o']:
-                self.canvas.create_text(150, 310, text="O Wins!!", tags='winner')
-                self.winCondition = True
+            self.displayWinner(self.board[i])
 
         # Vertical wins
         for j in range(3):
@@ -63,12 +63,7 @@ class tttCanvas:
             for i in range(3):
                 if self.board[i][j] != ' ':
                     column.append(self.board[i][j])
-            if column == ['x','x','x']:
-                self.canvas.create_text(150, 310, text="X Wins!!", tags='winner')
-                self.winCondition = True
-            if column == ['o','o','o']:
-                self.canvas.create_text(150, 310, text="O Wins!!", tags='winner')
-                self.winCondition = True
+            self.displayWinner(column)
 
         # Diagonal wins
         diagonal = []
@@ -76,23 +71,21 @@ class tttCanvas:
             for j in range(3):
                 if i == j and self.board[i][j] != ' ':
                     diagonal.append(self.board[i][j])
-            if diagonal == ['x','x','x']:
-                self.canvas.create_text(150, 310, text="X Wins!!", tags='winner')
-                self.winCondition = True
-            if diagonal == ['o','o','o']:
-                self.canvas.create_text(150, 310, text="O Wins!!", tags='winner')
-                self.winCondition = True
+            self.displayWinner(diagonal)
 
         oppositeDiagonal = []
         for i in range(3):
             oppositeDiagonal.append(self.board[i][2-i])
-        if oppositeDiagonal == ['x', 'x', 'x']:
+        self.displayWinner(oppositeDiagonal)
+
+
+    def displayWinner(self, row):
+        if row == ['x', 'x', 'x']:
             self.canvas.create_text(150, 310, text="X Wins!!", tags='winner')
             self.winCondition = True
-        if oppositeDiagonal == ['o', 'o', 'o']:
+        if row == ['o', 'o', 'o']:
             self.canvas.create_text(150, 310, text="O Wins!!", tags='winner')
             self.winCondition = True
-
 
 
     def resetBoard(self):
@@ -101,6 +94,7 @@ class tttCanvas:
         self.canvas.delete('winner')
         self.winCondition = False
         self.turn = 0
+        self.currentTurn.set(self.processTurn())
         self.board = [[' ', ' ', ' '],
                       [' ', ' ', ' '],
                       [' ', ' ', ' ']]
@@ -114,6 +108,7 @@ class tttCanvas:
                     if j*100 < event.x < (j + 1)*100 and i*100 < event.y < (i+1)*100 and self.board[i][j] == ' ':
                         self.canvas.create_image((j*100)+50, (i*100)+50, image=self.crossImg, tags='cross')
                         self.turn += 1
+                        self.currentTurn.set(self.processTurn())
                         self.board[i][j] = 'x'
                         self.processVictoryCondition()
         if player == 'o' and self.winCondition == False:
@@ -122,8 +117,11 @@ class tttCanvas:
                     if j*100 < event.x < (j + 1)*100 and i*100 < event.y < (i+1)*100 and self.board[i][j] == ' ':
                         self.canvas.create_image((j*100)+50, (i*100)+50, image=self.naughtImg, tags='naught')
                         self.turn += 1
+                        self.currentTurn.set(self.processTurn())
                         self.board[i][j] = 'o'
                         self.processVictoryCondition()
+        if self.turn == 9 and self.winCondition == False:
+            self.canvas.create_text(150, 310, text="Draw!!!", tags="winner")
 
 
 tttCanvas()
