@@ -9,9 +9,9 @@ class tttCanvas:
         self.turn = 0  # if even, cross's turn, if odd, naught's turn
         self.winCondition = False
 
-        self.board = {'top-l': ' ', 'top-m': ' ', 'top-r': ' ',
-                      'mid-l': ' ', 'mid-m': ' ', 'mid-r': ' ',
-                      'low-l': ' ', 'low-m': ' ', 'low-r': ' '}
+        self.board = [[' ', ' ', ' '],
+                      [' ', ' ', ' '],
+                      [' ', ' ', ' ']]
 
 
         # photoimage objects
@@ -44,107 +44,38 @@ class tttCanvas:
             return 'o'
 
     def processVictoryCondition(self):
-        # this will work better with a nested list
-        # the positions on the board need numerical relations to one another
-        # in order to implement this kind of logic
-        return None
+        for i in range(3):
+            if self.board[i] == ['x','x','x']:
+                print("x wins") # TODO print to canvas
+            if self.board[i] == ['o','o','o']:
+                print('o wins')
+
+
+
+    def resetBoard(self):
+        self.canvas.delete('cross')
+        self.canvas.delete('naught')
+        # TODO attach to button
 
 
     def processMove(self, event):
         player = self.processTurn()
         if player == 'x' and self.winCondition == False:
-            if 0 < event.x < 100 and 0 < event.y < 100 and self.board['top-l'] == ' ':
-                self.canvas.create_image(50, 50, image = self.crossImg)
-                self.turn += 1
-                move = 'top-l'
-                self.board[move] = player
-            if 100 < event.x < 200 and 0 < event.y < 100 and self.board['top-m'] == ' ':
-                self.canvas.create_image(150, 50, image=self.crossImg)
-                self.turn += 1
-                move = 'top-m'
-                self.board[move] = player
-            if 200 < event.x < 300 and 0 < event.y < 100 and self.board['top-r'] == ' ':
-                self.canvas.create_image(250, 50, image=self.crossImg)
-                self.turn += 1
-                move = 'top-r'
-                self.board[move] = player
-            if 0 < event.x < 100 and 100 < event.y < 200 and self.board['mid-l'] == ' ':
-                self.canvas.create_image(50, 150, image = self.crossImg)
-                self.turn += 1
-                move = 'mid-l'
-                self.board[move] = player
-            if 100 < event.x < 200 and 100 < event.y < 200 and self.board['mid-m'] == ' ':
-                self.canvas.create_image(150, 150, image=self.crossImg)
-                self.turn += 1
-                move = 'mid-m'
-                self.board[move] = player
-            if 200 < event.x < 300 and 100 < event.y < 200 and self.board['mid-r'] == ' ':
-                self.canvas.create_image(250, 150, image=self.crossImg)
-                self.turn += 1
-                move = 'mid-r'
-                self.board[move] = player
-            if 0 < event.x < 100 and 200 < event.y < 300 and self.board['low-l'] == ' ':
-                self.canvas.create_image(50, 250, image=self.crossImg)
-                self.turn += 1
-                move = 'low-l'
-                self.board[move] = player
-            if 100 < event.x < 200 and 200 < event.y < 300 and self.board['low-m'] == ' ':
-                self.canvas.create_image(150, 250, image=self.crossImg)
-                self.turn += 1
-                move = 'low-m'
-                self.board[move] = player
-            if 200 < event.x < 300 and 200 < event.y < 300 and self.board['low-r'] == ' ':
-                self.canvas.create_image(250, 250, image=self.crossImg)
-                self.turn += 1
-                move = 'low-r'
-                self.board[move] = player
-            # create a nested loop that does this
+            for i in range(3):
+                for j in range(3):
+                    if j*100 < event.x < (j + 1)*100 and i*100 < event.y < (i+1)*100 and self.board[i][j] == ' ':
+                        self.canvas.create_image((j*100)+50, (i*100)+50, image=self.crossImg, tags='cross')
+                        self.turn += 1
+                        self.board[i][j] = 'x'
+                        self.processVictoryCondition()
         if player == 'o' and self.winCondition == False:
-            if 0 < event.x < 100 and 0 < event.y < 100 and self.board['top-l'] == ' ':
-                self.canvas.create_image(50, 50, image = self.naughtImg)
-                self.turn += 1
-                move = 'top-l'
-                self.board[move] = player
-            if 100 < event.x < 200 and 0 < event.y < 100 and self.board['top-m'] == ' ':
-                self.canvas.create_image(150, 50, image=self.naughtImg)
-                self.turn += 1
-                move = 'top-m'
-                self.board[move] = player
-            if 200 < event.x < 300 and 0 < event.y < 100 and self.board['top-r'] == ' ':
-                self.canvas.create_image(250, 50, image=self.naughtImg)
-                self.turn += 1
-                move = 'top-r'
-                self.board[move] = player
-            if 0 < event.x < 100 and 100 < event.y < 200 and self.board['mid-l'] == ' ':
-                self.canvas.create_image(50, 150, image = self.naughtImg)
-                self.turn += 1
-                move = 'mid-l'
-                self.board[move] = player
-            if 100 < event.x < 200 and 100 < event.y < 200 and self.board['mid-m'] == ' ':
-                self.canvas.create_image(150, 150, image=self.naughtImg)
-                self.turn += 1
-                move = 'mid-m'
-                self.board[move] = player
-            if 200 < event.x < 300 and 100 < event.y < 200 and self.board['mid-r'] == ' ':
-                self.canvas.create_image(250, 150, image=self.naughtImg)
-                self.turn += 1
-                move = 'mid-r'
-                self.board[move] = player
-            if 0 < event.x < 100 and 200 < event.y < 300 and self.board['low-l'] == ' ':
-                self.canvas.create_image(50, 250, image=self.naughtImg)
-                self.turn += 1
-                move = 'low-l'
-                self.board[move] = player
-            if 100 < event.x < 200 and 200 < event.y < 300 and self.board['low-m'] == ' ':
-                self.canvas.create_image(150, 250, image=self.naughtImg)
-                self.turn += 1
-                move = 'low-m'
-                self.board[move] = player
-            if 200 < event.x < 300 and 200 < event.y < 300 and self.board['low-r'] == ' ':
-                self.canvas.create_image(250, 250, image=self.naughtImg)
-                self.turn += 1
-                move = 'low-r'
-                self.board[move] = player
+            for i in range(3):
+                for j in range(3):
+                    if j*100 < event.x < (j + 1)*100 and i*100 < event.y < (i+1)*100 and self.board[i][j] == ' ':
+                        self.canvas.create_image((j*100)+50, (i*100)+50, image=self.naughtImg, tags='naught')
+                        self.turn += 1
+                        self.board[i][j] = 'o'
+                        self.processVictoryCondition()
 
 
 tttCanvas()
