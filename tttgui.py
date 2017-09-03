@@ -20,6 +20,9 @@ class tttCanvas:
 
         frame = Frame(self.window)
         frame.pack()
+        frame2 = Frame(self.window)
+        frame2.pack()
+        Button(frame2, text="Reset", command=self.resetBoard).pack()
         self.canvas = Canvas(frame, width=self.canvas_width, height=self.canvas_height, bg="white")
         self.canvas.pack()
         self.drawGrid()
@@ -46,6 +49,7 @@ class tttCanvas:
     def processVictoryCondition(self):
         # Horizontal wins
         for i in range(3):
+            # TODO this conditional should be a modularized function
             if self.board[i] == ['x','x','x']:
                 self.canvas.create_text(150, 310, text="X Wins!!", tags='winner')
                 self.winCondition = True
@@ -94,7 +98,12 @@ class tttCanvas:
     def resetBoard(self):
         self.canvas.delete('cross')
         self.canvas.delete('naught')
-        # TODO attach to button
+        self.canvas.delete('winner')
+        self.winCondition = False
+        self.turn = 0
+        self.board = [[' ', ' ', ' '],
+                      [' ', ' ', ' '],
+                      [' ', ' ', ' ']]
 
 
     def processMove(self, event):
