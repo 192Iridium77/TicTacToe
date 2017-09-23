@@ -6,18 +6,19 @@ class tttCanvas:
         self.window.title('Tic Tac Toe')
         self.canvas_width = 300
         self.canvas_height = 320
+
+        # game conditions
         self.turn = 0  # if even, cross's turn, if odd, naught's turn
         self.winCondition = False
-
         self.board = [[' ', ' ', ' '],
                       [' ', ' ', ' '],
                       [' ', ' ', ' ']]
-
 
         # photoimage objects
         self.crossImg = PhotoImage(file="cross.png")
         self.naughtImg = PhotoImage(file="naught.png")
 
+        # Buttons, Frames, Labels
         frame = Frame(self.window)
         frame.pack()
         frame2 = Frame(self.window)
@@ -27,7 +28,6 @@ class tttCanvas:
         self.currentTurn = StringVar()
         self.currentTurn.set(self.processTurn())
         Label(frame2, textvariable=self.currentTurn).grid(row=1, column=2)
-
         self.canvas = Canvas(frame, width=self.canvas_width, height=self.canvas_height, bg="white")
         self.canvas.pack()
         self.drawGrid()
@@ -38,6 +38,7 @@ class tttCanvas:
         self.window.mainloop()
 
 
+    # Draws the grid for the Tic Tac Toe board
     def drawGrid(self):
         line1 = self.canvas.create_line(100, 0, 100, 300, width="3", tags="line1")
         line2 = self.canvas.create_line(200, 0, 200, 300, width="3", tags='line2')
@@ -45,13 +46,14 @@ class tttCanvas:
         line4 = self.canvas.create_line(0, 200, 300, 200, width="3", tags='line4')
         line5 = self.canvas.create_line(0, 300, 300, 300, width="3", tags='line4')
 
-
+    # Determine who's turn it currently is
     def processTurn(self):
         if self.turn % 2 == 0:
             return 'x'
         else:
             return 'o'
 
+    # Implement game logic to check for victor every round
     def processVictoryCondition(self):
         # Horizontal wins
         for i in range(3):
@@ -79,6 +81,7 @@ class tttCanvas:
         self.displayWinner(oppositeDiagonal)
 
 
+    # Check the given line for win conditions and display victor
     def displayWinner(self, row):
         if row == ['x', 'x', 'x']:
             self.canvas.create_text(150, 310, text="X Wins!!", tags='winner')
@@ -88,6 +91,7 @@ class tttCanvas:
             self.winCondition = True
 
 
+    # Resets board when button is clicked
     def resetBoard(self):
         self.canvas.delete('cross')
         self.canvas.delete('naught')
@@ -100,6 +104,7 @@ class tttCanvas:
                       [' ', ' ', ' ']]
 
 
+    # Read Mouse click location on canvas and draw appropriate marker
     def processMove(self, event):
         player = self.processTurn()
         if player == 'x' and self.winCondition == False:
